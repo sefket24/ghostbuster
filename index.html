@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Replit Ghost-Buster · Deployment Monitor</title>
+<title>Replit Ghost-Buster · Support Ops Triage Console</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 
@@ -626,6 +626,195 @@
   .spinner.active { display: block; }
 
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Workflow Steps ── */
+  .workflow-strip {
+    max-width: 1280px;
+    margin: 16px auto 0;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    flex: 1;
+    transition: border-color 0.3s, background 0.3s;
+    position: relative;
+  }
+
+  .step-item.active {
+    border-color: var(--neon-blue);
+    background: rgba(88, 166, 255, 0.06);
+    box-shadow: var(--accent-glow-blue);
+  }
+
+  .step-item.done {
+    border-color: var(--status-green);
+    background: rgba(63, 185, 80, 0.05);
+  }
+
+  .step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .step-item.active .step-num { background: var(--neon-blue); border-color: var(--neon-blue); color: #0d1117; }
+  .step-item.done .step-num { background: var(--status-green); border-color: var(--status-green); color: #0d1117; }
+
+  .step-label { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+  .step-item.active .step-label { color: var(--neon-blue); }
+  .step-item.done .step-label { color: var(--status-green); }
+  .step-sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+
+  .step-connector {
+    width: 32px;
+    height: 1px;
+    background: var(--border);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .step-connector::after {
+    content: '›';
+    position: absolute;
+    right: -4px;
+    top: -8px;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  /* ── Social Intake Card ── */
+  .intake-card { grid-column: 1 / -1; }
+
+  .platform-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .platform-pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .platform-pill:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+  .platform-pill.selected { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(88,166,255,0.08); }
+
+  .intake-row {
+    display: grid;
+    grid-template-columns: 160px 1fr auto;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .intake-username {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .intake-username:focus { border-color: var(--neon-blue); }
+  .intake-username::placeholder { color: var(--text-muted); }
+
+  .complaint-area {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    height: 64px;
+  }
+
+  .complaint-area:focus { border-color: var(--neon-blue); box-shadow: var(--accent-glow-blue); }
+  .complaint-area::placeholder { color: var(--text-muted); }
+
+  .parsed-complaint {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(88, 166, 255, 0.05);
+    border: 1px solid rgba(88, 166, 255, 0.2);
+    border-radius: 6px;
+    display: none;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .parsed-complaint.visible { display: flex; }
+
+  .parsed-field { display: flex; flex-direction: column; gap: 2px; }
+  .parsed-field-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); }
+  .parsed-field-value { font-size: 12px; color: var(--neon-blue); font-weight: 500; }
+  .parsed-field-value.green { color: var(--status-green); }
+  .parsed-field-value.red { color: var(--status-red); }
+  .parsed-field-value.yellow { color: var(--status-yellow); }
+
+  .example-complaints {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .example-chip {
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: 1px dashed var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+
+  .example-chip:hover { border-color: var(--neon-purple); color: var(--neon-purple); }
 </style>
 </head>
 <body>
@@ -636,20 +825,113 @@
     <div class="logo-icon">👻</div>
     <div>
       <div class="header-title">Replit Ghost-Buster</div>
-      <div class="header-subtitle">Deployment Health Monitor · v1.0.0</div>
+      <div class="header-subtitle">Support Ops Triage Console · v2.0.0</div>
     </div>
   </div>
   <div class="header-badge">Support Ops</div>
 </div>
 
+<!-- Workflow Steps -->
+<div class="workflow-strip">
+  <div class="step-item active" id="step1">
+    <div class="step-num">1</div>
+    <div>
+      <div class="step-label">Social Intake</div>
+      <div class="step-sub">Paste the user complaint</div>
+    </div>
+  </div>
+  <div class="step-connector"></div>
+  <div class="step-item" id="step2">
+    <div class="step-num">2</div>
+    <div>
+      <div class="step-label">Diagnose</div>
+      <div class="step-sub">Ping endpoint · stream logs</div>
+    </div>
+  </div>
+  <div class="step-connector"></div>
+  <div class="step-item" id="step3">
+    <div class="step-num">3</div>
+    <div>
+      <div class="step-label">Generate Brief</div>
+      <div class="step-sub">Structured engineering hand-off</div>
+    </div>
+  </div>
+</div>
+
 <!-- Main Grid -->
 <div class="container">
+
+  <!-- ── Social Ticket Intake (full width) ── -->
+  <div class="card intake-card">
+    <div class="card-header">
+      <div class="card-header-dot" style="background:#f78166"></div>
+      <span class="card-title">Step 1 · Social Ticket Intake</span>
+      <span class="tag" style="margin-left:auto;background:rgba(247,129,102,0.12);color:#f78166;border:1px solid rgba(247,129,102,0.3)">INBOUND</span>
+    </div>
+    <div class="card-body">
+      <div class="platform-pills">
+        <button class="platform-pill selected" id="pill-twitter" onclick="selectPlatform('twitter')">𝕏 X / Twitter</button>
+        <button class="platform-pill" id="pill-reddit" onclick="selectPlatform('reddit')">🤖 Reddit</button>
+        <button class="platform-pill" id="pill-linkedin" onclick="selectPlatform('linkedin')">💼 LinkedIn</button>
+        <button class="platform-pill" id="pill-appstore" onclick="selectPlatform('appstore')">⭐ App Store</button>
+      </div>
+
+      <div class="intake-row">
+        <div>
+          <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Username / Handle</div>
+          <input class="intake-username" id="intakeUsername" placeholder="@username" />
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">User Complaint</div>
+          <textarea class="complaint-area" id="complaintText" placeholder="Paste the user's post, tweet, or message here…" oninput="parseComplaint()"></textarea>
+        </div>
+        <div style="padding-top:18px">
+          <button class="btn btn-primary" onclick="triageComplaint()" style="white-space:nowrap">⚡ Triage This</button>
+        </div>
+      </div>
+
+      <div class="example-complaints">
+        <span style="font-size:10px;color:var(--text-muted);align-self:center">Try:</span>
+        <button class="example-chip" onclick="loadExample('503')">@dev_nico: "my repl keeps going down, 503 errors all morning replit.app/my-app"</button>
+        <button class="example-chip" onclick="loadExample('500')">@sarah_builds: "getting Internal Server Error on my Python repl after the latest update"</button>
+        <button class="example-chip" onclick="loadExample('404')">@jk_codes: "deployed my app but getting 404, the URL https://my-portfolio.replit.app doesn't load"</button>
+        <button class="example-chip" onclick="loadExample('billing')">@techfounder: "charged twice this month on my Replit Core sub, no response from support"</button>
+      </div>
+
+      <div class="parsed-complaint" id="parsedComplaint">
+        <div class="parsed-field">
+          <span class="parsed-field-label">Platform</span>
+          <span class="parsed-field-value" id="parsedPlatform">—</span>
+        </div>
+        <div class="parsed-field">
+          <span class="parsed-field-label">User</span>
+          <span class="parsed-field-value" id="parsedUser">—</span>
+        </div>
+        <div class="parsed-field">
+          <span class="parsed-field-label">Issue Type</span>
+          <span class="parsed-field-value" id="parsedIssueType">—</span>
+        </div>
+        <div class="parsed-field">
+          <span class="parsed-field-label">Detected URL</span>
+          <span class="parsed-field-value green" id="parsedUrl">—</span>
+        </div>
+        <div class="parsed-field">
+          <span class="parsed-field-label">Priority</span>
+          <span class="parsed-field-value" id="parsedPriority">—</span>
+        </div>
+        <div class="parsed-field">
+          <span class="parsed-field-label">Suggested Route</span>
+          <span class="parsed-field-value yellow" id="parsedRoute">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ── Monitor Input (full width) ── -->
   <div class="card monitor-card">
     <div class="card-header">
       <div class="card-header-dot" style="background:#58a6ff"></div>
-      <span class="card-title">Target Endpoint</span>
+      <span class="card-title">Step 2 · Diagnose — Target Endpoint</span>
       <div class="spinner" id="spinner"></div>
       <span class="tag tag-blue" id="poll-tag" style="display:none">POLLING · 30s</span>
     </div>
@@ -790,12 +1072,13 @@ const state = {
   latencies: [],
   lastStatus: null,
   lastCode: null,
-  history: [],          // array of {ok, code, ts, latency}
-  logs: [],             // all log entries
+  history: [],
+  logs: [],
   currentFilter: 'ALL',
   targetUrl: '',
   rawBrief: '',
   countdown: 30,
+  social: { platform: 'twitter', username: '', text: '', url: '', issueType: '', priority: '' },
 };
 
 const TIMELINE_SLOTS = 30;
@@ -1234,6 +1517,8 @@ function simulateError() {
 //  Internal Brief
 // ─────────────────────────────────────────────────
 function openBrief() {
+  document.getElementById('step2').className = 'step-item done';
+  document.getElementById('step3').className = 'step-item active';
   const code = state.lastCode;
   const err = ERROR_TEMPLATES[code] || ERROR_TEMPLATES[0];
   const now = new Date();
@@ -1254,12 +1539,29 @@ function openBrief() {
     ? errorLogs.map(l => `[${l.ts}] [${l.level}] ${l.msg}`).join('\n')
     : '(no error logs captured)';
 
-  const brief = `# 🚨 Deployment Incident Brief — ${sev}
-**Generated:** ${ts}
-**Tool:** Replit Ghost-Buster v1.0.0
+  const hasSocial = !!state.social.text;
+  const socialBlock = hasSocial ? `
+## 📣 Inbound Social Complaint
+| Field          | Value                                      |
+|----------------|--------------------------------------------|
+| **Platform**   | ${PLATFORM_LABELS[state.social.platform] || 'Unknown'} |
+| **User**       | ${state.social.username || 'unknown'}      |
+| **Issue Type** | ${state.social.issueType}                  |
+| **Priority**   | ${state.social.priority}                   |
+| **Route**      | ${document.getElementById('parsedRoute')?.textContent || '—'} |
+
+**Original Message:**
+> ${state.social.text}
 
 ---
+` : '';
 
+  const brief = `# 🚨 Deployment Incident Brief — ${sev}
+**Generated:** ${ts}
+**Tool:** Replit Ghost-Buster · Support Ops Triage Console v2.0.0
+
+---
+${socialBlock}
 ## 📍 Incident Summary
 | Field         | Value                                      |
 |---------------|--------------------------------------------|
@@ -1321,7 +1623,7 @@ ${err.action.replace(/<b>/g,'**').replace(/<\/b>/g,'**').replace(/<code>/g,'`').
 - **Tier 2 → Engineering:** If deployment remains unhealthy after env var correction + rebuild
 
 ---
-*Generated by Replit Ghost-Buster · Support Operations Tool*`;
+*Generated by Replit Ghost-Buster · Support Ops Triage Console v2.0.0*`;
 
   state.rawBrief = brief;
 
@@ -1353,6 +1655,115 @@ function copyBrief() {
 document.getElementById('briefModal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeBrief();
 });
+
+// ─────────────────────────────────────────────────
+//  Social Ticket Intake
+// ─────────────────────────────────────────────────
+const PLATFORM_LABELS = {
+  twitter: '𝕏 X / Twitter', reddit: '🤖 Reddit',
+  linkedin: '💼 LinkedIn',  appstore: '⭐ App Store',
+};
+
+const EXAMPLE_COMPLAINTS = {
+  '503': { platform: 'twitter', username: '@dev_nico',     text: '@Replit my repl keeps going down, 503 errors all morning https://my-app.replit.app — paying for Core and it\'s unusable rn' },
+  '500': { platform: 'reddit',  username: 'u/sarah_builds', text: 'getting Internal Server Error on my Python repl after the latest Replit update. It was fine yesterday. No changes on my end.' },
+  '404': { platform: 'twitter', username: '@jk_codes',     text: 'deployed my portfolio but getting 404, the URL https://my-portfolio.replit.app just doesn\'t load at all. been 2 hours' },
+  'billing': { platform: 'linkedin', username: 'James K.', text: 'I was charged twice this month on my Replit Core subscription. No response from support after 3 days. This is unacceptable for a paid product.' },
+};
+
+function selectPlatform(p) {
+  state.social.platform = p;
+  document.querySelectorAll('.platform-pill').forEach(el => el.classList.remove('selected'));
+  document.getElementById('pill-' + p).classList.add('selected');
+  parseComplaint();
+}
+
+function loadExample(key) {
+  const ex = EXAMPLE_COMPLAINTS[key];
+  if (!ex) return;
+  selectPlatform(ex.platform);
+  document.getElementById('intakeUsername').value = ex.username;
+  document.getElementById('complaintText').value = ex.text;
+  parseComplaint();
+}
+
+function parseComplaint() {
+  const text = document.getElementById('complaintText').value.trim();
+  const username = document.getElementById('intakeUsername').value.trim();
+  if (!text) { document.getElementById('parsedComplaint').classList.remove('visible'); return; }
+
+  // Extract URL
+  const urlMatch = text.match(/https?:\/\/[^\s'"]+/i);
+  const detectedUrl = urlMatch ? urlMatch[0] : null;
+
+  // Classify issue
+  let issueType = 'General Inquiry';
+  let priority = 'P3 — Low';
+  let route = '→ Tier 1 Response';
+
+  const lower = text.toLowerCase();
+  if (/503|service unavail|container|sleep/i.test(lower)) { issueType = 'Deployment Down (503)'; priority = 'P1 — Critical'; route = '→ Escalate to Eng'; }
+  else if (/500|internal server|exception|crash/i.test(lower)) { issueType = 'Server Error (500)'; priority = 'P1 — Critical'; route = '→ Escalate to Eng'; }
+  else if (/404|not found|url.*don.t load|doesn.t load/i.test(lower)) { issueType = 'Routing / 404'; priority = 'P2 — High'; route = '→ Tier 2 + .replit check'; }
+  else if (/billed|charged|refund|subscription|payment|invoice/i.test(lower)) { issueType = 'Billing Dispute'; priority = 'P2 — High'; route = '→ Billing Team (Stripe/Orb)'; }
+  else if (/slow|latency|timeout|performance/i.test(lower)) { issueType = 'Performance Degradation'; priority = 'P2 — High'; route = '→ Tier 2 Triage'; }
+  else if (/secret|env|env var|token|key/i.test(lower)) { issueType = 'Secrets / Env Config'; priority = 'P2 — High'; route = '→ Tier 2 + Secrets check'; }
+
+  state.social = { platform: state.social.platform, username, text, url: detectedUrl || '', issueType, priority };
+
+  // Render parsed block
+  const prioColor = priority.startsWith('P1') ? 'red' : priority.startsWith('P2') ? 'yellow' : 'green';
+  document.getElementById('parsedPlatform').textContent  = PLATFORM_LABELS[state.social.platform];
+  document.getElementById('parsedUser').textContent      = username || '(unknown)';
+  document.getElementById('parsedIssueType').textContent = issueType;
+  document.getElementById('parsedUrl').textContent       = detectedUrl || 'none detected';
+  document.getElementById('parsedPriority').textContent  = priority;
+  document.getElementById('parsedPriority').className    = 'parsed-field-value ' + prioColor;
+  document.getElementById('parsedRoute').textContent     = route;
+  document.getElementById('parsedComplaint').classList.add('visible');
+}
+
+function triageComplaint() {
+  const text = document.getElementById('complaintText').value.trim();
+  if (!text) { document.getElementById('complaintText').focus(); return; }
+
+  parseComplaint();
+
+  // Step 1 → done, step 2 → active
+  document.getElementById('step1').className = 'step-item done';
+  document.getElementById('step2').className = 'step-item active';
+
+  // If a URL was found, pre-fill the monitor
+  if (state.social.url) {
+    document.getElementById('urlInput').value = state.social.url;
+    addLog('INFO', `[Intake] Complaint received via ${PLATFORM_LABELS[state.social.platform]}`);
+    addLog('INFO', `[Intake] User: ${state.social.username || 'unknown'} · Issue: ${state.social.issueType}`);
+    addLog('INFO', `[Intake] Extracted endpoint → ${state.social.url}`);
+    addLog('WARN',  `[Intake] Priority: ${state.social.priority}`);
+
+    // Auto-start monitoring
+    startMonitoring();
+  } else {
+    // No URL — still log and show action hint based on issue type
+    addLog('INFO', `[Intake] Complaint received via ${PLATFORM_LABELS[state.social.platform]}`);
+    addLog('INFO', `[Intake] User: ${state.social.username || 'unknown'} · Issue: ${state.social.issueType}`);
+    addLog('WARN',  '[Intake] No endpoint URL detected in complaint — using current URL field');
+    addLog('WARN',  `[Intake] Priority: ${state.social.priority}`);
+
+    if (/billing/i.test(state.social.issueType)) {
+      document.getElementById('actionHint').classList.add('visible');
+      document.getElementById('actionHintText').innerHTML = '<b>Billing Route:</b> Check Stripe/Orb dashboard for duplicate charge. Locate account by email → verify subscription state → initiate refund if confirmed. Reference internal billing SOP.';
+      document.getElementById('briefBtn').disabled = false;
+    } else {
+      simulateError();
+    }
+    document.getElementById('uptimeStats').style.display = 'flex';
+    document.getElementById('briefBtn').disabled = false;
+  }
+
+  // Scroll to monitor section
+  document.querySelector('.monitor-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 </script>
 </body>
 </html>
