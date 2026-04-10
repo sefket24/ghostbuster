@@ -1,6 +1,6 @@
 # 👻 Replit Ghost-Buster — Support Ops Triage Console
 
-**Built for the Replit Social Media Support Specialist application.**
+**Built for the Replit Social Media Support Specialist application · by [Sefket Nouri](https://replit.com/@sefketnouri)**
 
 A deployment health monitor and social ticket triage tool that demonstrates the full support workflow: inbound social complaint → endpoint diagnosis → structured engineering hand-off.
 
